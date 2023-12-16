@@ -50,7 +50,7 @@ const productSchema = mongoose.Schema({
       user: {
         type: mongoose.Schema.ObjectId,
         ref: "User",
-        required: true,
+        // required: true, // Remove this line to make the user field optional
       },
       name: {
         type: String,
@@ -70,7 +70,7 @@ const productSchema = mongoose.Schema({
   user: {
     type: mongoose.Schema.ObjectId,
     ref: "User",
-    required: true,
+    // required: true, // Remove this line to make the user field optional
   },
   createdAt: {
     type: Date,
