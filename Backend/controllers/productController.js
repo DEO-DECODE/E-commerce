@@ -19,6 +19,17 @@ exports.getAllProducts = catchAsyncErrors(async (req, res) => {
     success: true,
     products,
   });
+  /*
+  getAllProducts Function:
+
+This function is an Express route handler for handling requests to retrieve a list of products.
+ApiFeatures Usage:
+
+An instance of the ApiFeatures class is created with Product.find() as the initial query and req.query as the query string. The search() method is then called on this instance, which modifies the query based on the search criteria in the query string.
+Query Execution:
+
+The modified query is then executed asynchronously using await apiFeatures.query, and the resulting products are stored in the products variable.
+  */
 });
 
 // Update a product
