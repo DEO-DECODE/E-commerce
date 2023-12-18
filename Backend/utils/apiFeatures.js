@@ -17,6 +17,15 @@ class ApiFeatures {
     this.query = this.query.find({ ...keyword });
     return this;
   }
+  // Filter for category
+  filter() {
+    const queryCopy = { ...this.queryStr };
+    // Remove some Fields for category
+    const removeFields = ["keyword", "page", "limit"];
+    removeFields.forEach((key) => delete queryCopy[key]);
+    this.query=this.query.find(queryCopy);
+    return this;
+  }
 }
 // Product.find() is acting as a query
 // queryStr= ? ke baad keyword=samosa
