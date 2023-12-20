@@ -1,5 +1,6 @@
 const catchAsyncErrors = require("../middleware/catchAsyncErrors");
 const User = require("../models/userModel");
+const sendToken=require("../utils/jwtToken");
 // Register A user
 exports.registerUser = catchAsyncErrors(async (req, res, next) => {
   const { name, email, password } = req.body;
@@ -12,8 +13,27 @@ exports.registerUser = catchAsyncErrors(async (req, res, next) => {
       url: "Sample Url",
     },
   });
-  res.status(201).json({
-    success: true,
-    user,
-  });
+  sendToken(user, 201, res);
+});
+// Login User
+exports.loginUser = catchAsyncErrors(async (req, res, next) => {
+  const { email, password } = req.body;
+  // checking if user has given password and email both
+  if (!email || !password) {
+    return next(new ErrorHander("Please Enter Email & Password", 400));
+  }
+  const user = await User.findOne({ email }).select("+password");
+  // Why .select("+password")?;
+  /*
+  Uses Mongoose to find a user by email, including the password field in the result (select("+password")).
+  */
+  if (!user) {
+    return next(new ErrorHander("Invalid email or password", 401));
+  }
+  const isPasswordMatched = await user.comparePassword(password);
+  if (!isPasswordMatched) {
+    return next(new ErrorHander("Invalid email or password", 401));
+  }
+  sendToken(user, 200, res);
+  
 });
