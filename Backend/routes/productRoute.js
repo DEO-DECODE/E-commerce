@@ -1,8 +1,9 @@
 const express=require("express");
 const { getAllProducts , createProduct, updateProduct, deleteProduct, getProductDetails} = require("../controllers/productController");
+const { isAuthenticatedUser } = require("../middleware/isAuthenticatedUser"); 
 const router=express.Router();
 // Get Products 
-router.route("/products").get(getAllProducts);
+router.route("/products").get(isAuthenticatedUser, getAllProducts);
 // Save a new Product
 router.route("/product/new").post(createProduct);
 // Update , Get and delete Product by using it's id
