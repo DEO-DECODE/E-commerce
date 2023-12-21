@@ -16,12 +16,18 @@ const userSchema = new mongoose.Schema({
     required: [true, "Please Enter Your Email"],
     unique: true,
     validate: [validator.isEmail, "Please Enter a valid Email"],
+    /*
+    validate: [validator.isEmail, "Please Enter a valid Email"]: Uses a custom validator function (validator.isEmail), provided by a validator library, to validate that the entered value is a valid email address.
+    */
   },
   password: {
     type: String,
     required: [true, "Please Enter Your Password"],
     minLength: [8, "Password should be greater than 8 characters"],
     select: false,
+    /*
+    Specifies that by default, the password field should not be included in the query results.
+    */
   },
   avatar: {
     public_id: {
