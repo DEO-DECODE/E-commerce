@@ -70,7 +70,7 @@ const productSchema = mongoose.Schema({
   user: {
     type: mongoose.Schema.ObjectId,
     ref: "User",
-    // required: true, // Remove this line to make the user field optional
+    required: true,
   },
   createdAt: {
     type: Date,

@@ -9,18 +9,23 @@ exports.isAuthenticatedUser = catchAsyncErrors(async (req, res, next) => {
     return next(new ErrorHander("Please Login to access this resource", 401));
   }
 
-  try {
-    const decodedData = jwt.verify(token, process.env.JWT_SECRET);
-    console.log('Token Decoded:', decodedData);
-    req.user = await User.findById(decodedData.id);
-    next();
-  } catch (error) {
-    console.error('JWT Verification Error:', error);
-    if (error.name === 'TokenExpiredError') {
-      return next(new ErrorHander("JWT token has expired", 401));
-    }
-    // Handle other errors if needed
-    return next(new ErrorHander("Invalid token", 401));
-  }
-  
+  const decodedData = jwt.verify(token, process.env.JWT_SECRET);
+  console.log("Token Decoded:", decodedData);
+  req.user = await User.findById(decodedData.id);
+  // Jb tk user logged in rahega tb tk hm kv v user ka data accesskr skte hain.
+  next();
 });
+exports.authorizeRoles = (...roles) => {
+  return (req, res, next) => {
+    if (!roles.includes(req.user.role)) {
+      return next(
+        new ErrorHander(
+          `Role: ${req.user.role} is not allowed to access this resouce `,
+          403
+        )
+      );
+    }
+
+    next();
+  };
+};
