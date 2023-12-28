@@ -4,6 +4,7 @@ const sendToken = require("../utils/jwtToken");
 const sendEmail = require("../utils/sendEmail");
 const ErrorHander = require("../utils/errorhander");
 const crypto = require("crypto");
+
 // Register A user
 exports.registerUser = catchAsyncErrors(async (req, res, next) => {
   const { name, email, password } = req.body;
@@ -28,7 +29,7 @@ exports.loginUser = catchAsyncErrors(async (req, res, next) => {
   const user = await User.findOne({ email }).select("+password");
   // Why .select("+password")?;
   /*
-  Uses Mongoose to find a user by email, including the password field in the result (select("+password")).
+  The .select("+password") part explicitly includes the password field in the query result. This means that when you retrieve a user by their email using this query, the resulting user object will contain the hashed password.
   */
   if (!user) {
     return next(new ErrorHander("Invalid email or password", 401));
@@ -67,7 +68,7 @@ exports.forgotPassword = catchAsyncErrors(async (req, res, next) => {
   const resetPasswordUrl = `${req.protocol}://${req.get(
     "host"
   )}/api/v1/password/reset/${resetToken}`;
-
+  // req.host is goingto return the Localhost
   const message = `Your password reset token is: ${resetPasswordUrl}\n\nIf you have not requested this email, please ignore it.`;
 
   try {
@@ -101,7 +102,7 @@ exports.resetPassword = catchAsyncErrors(async (req, res, next) => {
       .createHash("sha256")
       .update(resetToken)
       .digest("hex");
-
+//  genearting a resetPasswordToken because, it was saved in hashed form.
     console.log('Generated resetPasswordToken:', resetPasswordToken);
 
     const user = await User.findOne({
@@ -145,7 +146,7 @@ exports.getUserDetails = catchAsyncErrors(async (req, res, next) => {
 // update User password
 exports.updatePassword = catchAsyncErrors(async (req, res, next) => {
   const user = await User.findById(req.user.id).select("+password");
-
+ 
   const isPasswordMatched = await user.comparePassword(req.body.oldPassword);
 
   if (!isPasswordMatched) {
@@ -233,11 +234,8 @@ exports.deleteUser = catchAsyncErrors(async (req, res, next) => {
     );
   }
 
-  const imageId = user.avatar.public_id;
+  await user.deleteOne(req.params);
 
-  await cloudinary.v2.uploader.destroy(imageId);
-
-  await user.remove();
 
   res.status(200).json({
     success: true,

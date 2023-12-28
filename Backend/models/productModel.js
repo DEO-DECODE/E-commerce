@@ -9,6 +9,9 @@ const productSchema = mongoose.Schema({
   description: {
     type: String,
     required: [true, "Please Enter product Description"],
+    /* 
+    The second Element is the custom error , to be displayed, if the field is missing
+    */
   },
   price: {
     type: Number,
